@@ -32,7 +32,12 @@ const createPost = async (req, res, next) => {
     return next(errObj);
   }
 
+  if (!req.file) {
+    throw new Error("Image not found");
+  }
+
   const { title, content } = req.body;
+  const imageUrl = `/images/${req.file.filename}`;
 
   try {
     const post = new Post({
@@ -41,7 +46,7 @@ const createPost = async (req, res, next) => {
       creator: {
         name: "Sparrow",
       },
-      imageUrl: "/images/image.png",
+      imageUrl: imageUrl,
     });
 
     await post.save();
