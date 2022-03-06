@@ -114,16 +114,24 @@ class Feed extends Component {
       url = "URL";
     }
 
+    console.log({ postData });
+
+    console.log(postData.image);
+
+    const formData = new FormData();
+
+    formData.append("title", postData.title);
+    formData.append("content", postData.content);
+    formData.append("image", postData.image);
+
+    console.log({ formData });
+
     fetch(`${baseUrl}/${url}`, {
       method: method,
-      headers: {
-        "Content-Type": "multipart/form-data"
-      },
-      body: JSON.stringify({
-        title: postData.title,
-        content: postData.content,
-        imageUrl: postData.image
-      })
+      //   headers: {
+      //     "Content-Type": "multipart/form-data"
+      //   },
+      body: formData
     })
       .then(res => {
         if (res.status !== 200 && res.status !== 201) {
@@ -137,6 +145,7 @@ class Feed extends Component {
         const post = {
           _id: resData.post._id,
           title: resData.post.title,
+          image: resData.post.imageUrl,
           content: resData.post.content,
           creator: resData.post.creator,
           createdAt: resData.post.createdAt

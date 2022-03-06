@@ -1,4 +1,5 @@
 const path = require("path");
+// const multer = require("multer");
 
 const express = require("express");
 const mongoose = require("mongoose");
@@ -7,7 +8,20 @@ const { router } = require("./routes/post");
 
 const app = express();
 
+// THIS CAN BE DONE AS WELL BUT WILL ADD THE file FIELD IN ALL THE REQUEST
+// const fileStorage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, path.join(__dirname, "images"));
+//   },
+//   filename: (req, file, cb) => {
+//     cb(null, `${Date.now()}-${file.originalname}`);
+//   },
+// });
+
+// const uploadFile = multer({ storage: fileStorage }).single("image");
+
 app.use(express.json());
+// app.use(uploadFile);
 app.use("/images", express.static(path.join(__dirname, "images")));
 
 app.use((req, res, next) => {
