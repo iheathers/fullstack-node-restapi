@@ -4,8 +4,15 @@ const post = require("../models/post");
 const Post = require("../models/post");
 
 const getPosts = async (req, res, next) => {
+  const perPage = 2;
+  const currentPage = req.query.page;
+
   try {
-    const posts = await Post.find();
+    const totalItems = await Post.countDocuments();
+
+    const posts = await Post.find()
+      .skip((currentPage - 1) * perPage)
+      .limit(perPage);
 
     if (!posts.length) {
       throw new Error("Could not fetch posts");
@@ -13,6 +20,7 @@ const getPosts = async (req, res, next) => {
 
     res.status(200).json({
       posts: posts,
+      totalItems: totalItems,
     });
   } catch (error) {
     next(error);
