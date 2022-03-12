@@ -117,7 +117,7 @@ class Feed extends Component {
     let url = "api/feed/post";
     let method = "POST";
     if (this.state.editPost) {
-      url = `api/feed/post/${this.state.editPost._id}`;
+      url = `api/feed/posts/${this.state.editPost._id}`;
       method = "PUT";
     }
 
@@ -193,8 +193,12 @@ class Feed extends Component {
   };
 
   deletePostHandler = postId => {
+    console.log({ postId });
+
     this.setState({ postsLoading: true });
-    fetch(`${baseUrl}/api/post/${postId}`, {})
+    fetch(`${baseUrl}/api/feed/posts/${postId}`, {
+      method: "DELETE"
+    })
       .then(res => {
         if (res.status !== 200 && res.status !== 201) {
           throw new Error("Deleting a post failed!");

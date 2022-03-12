@@ -1,4 +1,5 @@
 const path = require("path");
+// const cors = require("cors");
 // const multer = require("multer");
 
 const express = require("express");
@@ -31,6 +32,10 @@ app.use((req, res, next) => {
     "GET, POST, PUT, PATCH, DELETE"
   );
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  //   if (req.method === "OPTIONS") {
+  //     return res.status(200).end();
+  //   }
   next();
 });
 

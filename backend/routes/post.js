@@ -1,5 +1,6 @@
-const multer = require("multer");
 const path = require("path");
+// const cors = require("cors");
+const multer = require("multer");
 const express = require("express");
 const { body } = require("express-validator");
 
@@ -8,6 +9,7 @@ const {
   getPosts,
   createPost,
   updatePost,
+  deletePost,
 } = require("../controllers/post");
 
 const fileStorage = multer.diskStorage({
@@ -31,7 +33,9 @@ router.use(uploadFile);
 
 router.get("/posts", getPosts);
 
-router.get("/post/:postId", getPost);
+router.get("/posts/:postId", getPost);
+
+// router.options("/posts/:postId", cors());
 
 router.post(
   "/post",
@@ -40,9 +44,12 @@ router.post(
 );
 
 router.put(
-  "/post/:postId",
+  "/posts/:postId",
   [body("title").isLength({ min: 5 }), body("content").isLength({ min: 5 })],
   updatePost
 );
+
+// router.options("/posts/:postId", cors());
+router.delete("/posts/:postId", deletePost);
 
 module.exports = { router };

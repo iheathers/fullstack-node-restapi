@@ -1,4 +1,5 @@
 const { validationResult } = require("express-validator");
+const post = require("../models/post");
 
 const Post = require("../models/post");
 
@@ -128,4 +129,25 @@ const updatePost = async (req, res, next) => {
   console.log("updated Post");
 };
 
-module.exports = { getPost, getPosts, createPost, updatePost };
+const deletePost = async (req, res, next) => {
+  console.log("deletePost");
+
+  const postId = req.params.postId;
+
+  try {
+    const { deletedCount } = await Post.deleteOne({ _id: postId });
+
+    if (!deletedCount) {
+      return res.status(404).json({
+        message: "Not Found",
+      });
+    }
+    res.status(200).json({
+      message: "Post deleted successfully.",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { getPost, getPosts, createPost, updatePost, deletePost };
