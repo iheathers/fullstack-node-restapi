@@ -3,6 +3,13 @@ const path = require("path");
 const express = require("express");
 const { body } = require("express-validator");
 
+const {
+  getPost,
+  getPosts,
+  createPost,
+  updatePost,
+} = require("../controllers/post");
+
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, path.join(__dirname, "../images"));
@@ -14,8 +21,6 @@ const fileStorage = multer.diskStorage({
 
 const uploadFile = multer({ storage: fileStorage }).single("image");
 const router = express.Router();
-
-const { getPost, getPosts, createPost } = require("../controllers/post");
 
 router.use((req, res, next) => {
   console.log(`Time: ${Date.now()}`);
@@ -32,6 +37,12 @@ router.post(
   "/post",
   [body("title").isLength({ min: 5 }), body("content").isLength({ min: 5 })],
   createPost
+);
+
+router.put(
+  "/post/:postId",
+  [body("title").isLength({ min: 5 }), body("content").isLength({ min: 5 })],
+  updatePost
 );
 
 module.exports = { router };

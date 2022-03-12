@@ -90,4 +90,42 @@ const getPost = async (req, res, next) => {
   }
 };
 
-module.exports = { getPost, getPosts, createPost };
+const updatePost = async (req, res, next) => {
+  const postId = req.params.postId;
+
+  try {
+    const selectedPostForUpdate = await Post.findById(postId);
+
+    if (!selectedPostForUpdate) {
+      const errObj = new Error("Post not found.");
+      errObj.statusCode = 422;
+
+      next(errObj);
+    }
+
+    const { title, content } = req.body;
+
+    let imageUrl = selectedPostForUpdate.imageUrl;
+
+    if (req.file) {
+      imageUrl = `/images/${req.file.filename}`;
+    }
+
+    selectedPostForUpdate.title = title;
+    selectedPostForUpdate.content = content;
+    selectedPostForUpdate.imageUrl = imageUrl;
+
+    const updatedPost = await selectedPostForUpdate.save();
+
+    res.status(200).json({
+      message: "Post updated successfully.",
+      post: updatedPost,
+    });
+  } catch (error) {
+    next(error);
+  }
+
+  console.log("updated Post");
+};
+
+module.exports = { getPost, getPosts, createPost, updatePost };
