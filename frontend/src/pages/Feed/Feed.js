@@ -60,6 +60,8 @@ class Feed extends Component {
         return res.json();
       })
       .then(resData => {
+        console.log("her", { resData });
+
         this.setState({
           posts: resData.posts,
           totalPosts: resData.totalItems,
@@ -107,11 +109,16 @@ class Feed extends Component {
     this.setState({
       editLoading: true
     });
+
+    console.log(this.state.editPost);
+
+    console.log({ postData });
     // Set up data (with image!)
     let url = "api/feed/post";
     let method = "POST";
     if (this.state.editPost) {
-      url = "URL";
+      url = `api/feed/post/${this.state.editPost._id}`;
+      method = "PUT";
     }
 
     console.log({ postData });
@@ -134,9 +141,11 @@ class Feed extends Component {
       body: formData
     })
       .then(res => {
-        if (res.status !== 200 && res.status !== 201) {
+        if (res.status !== 200 && res.status !== 201 && res.status !== 204) {
           throw new Error("Creating or editing a post failed!");
         }
+
+        console.log({ res });
         return res.json();
       })
       .then(resData => {
@@ -185,7 +194,7 @@ class Feed extends Component {
 
   deletePostHandler = postId => {
     this.setState({ postsLoading: true });
-    fetch("URL")
+    fetch(`${baseUrl}/api/post/${postId}`, {})
       .then(res => {
         if (res.status !== 200 && res.status !== 201) {
           throw new Error("Deleting a post failed!");
