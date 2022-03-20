@@ -1,6 +1,7 @@
 const { validationResult } = require("express-validator");
 
 const Post = require("../models/post");
+const User = require("../models/user");
 
 const getPosts = async (req, res, next) => {
   const perPage = 2;
@@ -51,12 +52,12 @@ const createPost = async (req, res, next) => {
   const imageUrl = `/images/${req.file.filename}`;
 
   try {
+    const user = await User.findById(req.userId);
+
     const post = new Post({
       title: title,
       content: content,
-      creator: {
-        name: "Sparrow",
-      },
+      creator: { _id: user._id, name: user.name },
       imageUrl: imageUrl,
     });
 
@@ -65,11 +66,9 @@ const createPost = async (req, res, next) => {
     const newPost = {
       title: title,
       content: content,
-      creator: {
-        name: "Sparrow",
-      },
+      creator: { _id: user._id, name: user.name },
       createdAt: new Date(),
-      _id: new Date().toISOString(),
+      _id: post._id,
     };
 
     res.status(201).json({
@@ -114,6 +113,12 @@ const updatePost = async (req, res, next) => {
       next(errObj);
     }
 
+    if (req.userId !== selectedPostForUpdate.creator.toString()) {
+      const errObj = new Error("Not authorized.");
+      errObj.statusCode = 401;
+      return next(errObj);
+    }
+
     const { title, content } = req.body;
 
     let imageUrl = selectedPostForUpdate.imageUrl;
@@ -145,6 +150,13 @@ const deletePost = async (req, res, next) => {
   const postId = req.params.postId;
 
   try {
+    const post = await Post.findById(postId);
+    if (req.userId !== post.creator.toString()) {
+      const errObj = new Error("Not authorized.");
+      errObj.statusCode = 401;
+      return next(errObj);
+    }
+
     const { deletedCount } = await Post.deleteOne({ _id: postId });
 
     if (!deletedCount) {
