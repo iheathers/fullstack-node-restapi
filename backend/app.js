@@ -5,7 +5,8 @@ const path = require("path");
 const express = require("express");
 const mongoose = require("mongoose");
 
-const { router } = require("./routes/post");
+const { postRouter } = require("./routes/post");
+const { userRouter } = require("./routes/user");
 
 const app = express();
 
@@ -39,7 +40,9 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/api/feed", router);
+app.use("/api/feed", postRouter);
+
+app.use("/api/users", userRouter);
 
 app.use((error, req, res, next) => {
   console.log("global error handling function", { error });

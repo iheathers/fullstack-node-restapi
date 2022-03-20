@@ -4,6 +4,8 @@ const multer = require("multer");
 const express = require("express");
 const { body } = require("express-validator");
 
+const { isAuth } = require("../middleware/is-auth");
+
 const {
   getPost,
   getPosts,
@@ -22,34 +24,36 @@ const fileStorage = multer.diskStorage({
 });
 
 const uploadFile = multer({ storage: fileStorage }).single("image");
-const router = express.Router();
+const postRouter = express.Router();
 
-router.use((req, res, next) => {
+postRouter.use((req, res, next) => {
   console.log(`Time: ${Date.now()}`);
   next();
 });
 
-router.use(uploadFile);
+postRouter.use(uploadFile);
 
-router.get("/posts", getPosts);
+postRouter.get("/posts", isAuth, getPosts);
 
-router.get("/posts/:postId", getPost);
+postRouter.get("/posts/:postId", isAuth, getPost);
 
-// router.options("/posts/:postId", cors());
+// postRouter.options("/posts/:postId", cors());
 
-router.post(
+postRouter.post(
   "/post",
   [body("title").isLength({ min: 5 }), body("content").isLength({ min: 5 })],
+  isAuth,
   createPost
 );
 
-router.put(
+postRouter.put(
   "/posts/:postId",
+  isAuth,
   [body("title").isLength({ min: 5 }), body("content").isLength({ min: 5 })],
   updatePost
 );
 
-// router.options("/posts/:postId", cors());
-router.delete("/posts/:postId", deletePost);
+// postRouter.options("/posts/:postId", cors());
+postRouter.delete("/posts/:postId", isAuth, deletePost);
 
-module.exports = { router };
+module.exports = { postRouter };

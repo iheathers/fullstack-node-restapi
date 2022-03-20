@@ -1,5 +1,4 @@
 const { validationResult } = require("express-validator");
-const post = require("../models/post");
 
 const Post = require("../models/post");
 
@@ -15,7 +14,10 @@ const getPosts = async (req, res, next) => {
       .limit(perPage);
 
     if (!posts.length) {
-      throw new Error("Could not fetch posts");
+      return res.status(200).json({
+        posts: [],
+        totalItems: 0,
+      });
     }
 
     res.status(200).json({
